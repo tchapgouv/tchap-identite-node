@@ -1,0 +1,10 @@
+{
+  "rooms": {
+    "34ef7f5b8ee2fb08b35ef3e60baa098d3cdf8422f7dd5a99fd8556dc0a2064b7449693b70b73439a1d8aa6e281b40546465c0fde984047bad8670117be6003ce": {
+      "algorithm": "m.megolm.v1.aes-sha2"
+    },
+    "53f238412e4df5aef34384cd94217fdd50426108ea04c2766cf463fca539f648e1eb38b04e42aee3ad7c6805a2b1090d77c2a2f89910416bd9a5bf457c8db416": {
+      "algorithm": "m.megolm.v1.aes-sha2"
+    }
+  }
+}
