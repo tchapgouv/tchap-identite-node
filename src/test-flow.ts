@@ -30,6 +30,7 @@ testRouter.get('/login', async (req, res) => {
         scope: 'openid email profile',
         code_challenge,
         code_challenge_method: 'S256',
+        login_hint: 'c.eliacheff@gmail.com'
     });
 
     res.redirect(redirect_url)
