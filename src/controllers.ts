@@ -3,6 +3,7 @@ import {RequestHandler} from "express";
 import {Provider} from "oidc-provider";
 import otpGenerator from 'otp-generator';
 
+let GLOBAL_OTP: string = '';
 
 export const makeStartInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
     try {
@@ -18,7 +19,8 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
             upperCaseAlphabets: false,
             specialChars: false
         })
-        console.log(otp);
+
+        GLOBAL_OTP = otp;
 
         if (prompt.name === 'consent' || prompt.name === 'login') {
             return res.render('interaction', {
@@ -27,7 +29,7 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
                 details: prompt.details,
                 params,
                 title: 'Authorize Tchap',
-                flash: undefined,
+                flash: 'OTP generated:' + otp,
                 login_hint: req.body?.email,
             });
         }
@@ -50,14 +52,14 @@ export const makeLoginInteraction = (provider: Provider): RequestHandler => asyn
         // const accountId = await Account.authenticate(req.body.email, req.body.password);
         const accountId = '1';
 
-        if (req.body.otp !== '123') {
+        if (!req.body.otp || !GLOBAL_OTP || req.body.otp !== GLOBAL_OTP) {
             return res.render('interaction', {
                 client,
                 uid,
                 details: prompt.details,
                 params,
                 title: 'Authorize Tchap',
-                flash: 'Invalid OTP (123)'
+                flash: `Invalid OTP, use ${GLOBAL_OTP}`
             });
         }
 
