@@ -5,7 +5,7 @@ import {
     endInteractionController,
     loginInteractionController,
     startInteractionController
-} from "./dependencies";
+} from "./config/dependencies";
 
 const parse = bodyParser.urlencoded({extended: false});
 

@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {generators, Issuer} from 'openid-client';
-import {appUrl} from "../config";
+import {appUrl} from "../config/config";
 
 const demoRouter = Router();
 

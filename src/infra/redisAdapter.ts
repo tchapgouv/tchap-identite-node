@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
+import {Adapter, AdapterConstructor} from "oidc-provider";
 
 const client = new Redis(process.env.REDIS_URL!, { keyPrefix: 'oidc:' });
 
@@ -30,7 +31,7 @@ function uidKeyFor(uid: string) {
     return `uid:${uid}`;
 }
 
-class RedisAdapter {
+class RedisAdapter implements Adapter {
     private readonly name: string;
 
     constructor(name: string) {

@@ -1,8 +1,8 @@
 import {MatrixClient} from "matrix-bot-sdk";
 import {Provider} from "oidc-provider";
-import {appUrl} from "../config";
-import {makeAbortInteraction, makeEndInteraction, makeLoginInteraction, makeStartInteraction} from "./controllers";
-import {matrixClient} from "../notifications/matrixClient";
+import {appUrl} from "./config";
+import {makeAbortInteraction, makeEndInteraction, makeLoginInteraction, makeStartInteraction} from "../controllers";
+import {matrixClient} from "../notifications/matrixBot";
 import {configuration} from "./provider";
 
 const oidcProvider = new Provider(appUrl, configuration);

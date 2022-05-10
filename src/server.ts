@@ -1,8 +1,8 @@
 import express, {Application} from 'express'
 import helmet from "helmet";
 import path from "path";
-import {oidcProvider} from "./auth/dependencies";
-import flowRouter from "./auth/routes";
+import {oidcProvider} from "./config/dependencies";
+import flowRouter from "./routes";
 import demoRouter from "./demo-app/demo-app";
 
 const server = () => {

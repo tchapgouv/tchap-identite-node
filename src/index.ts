@@ -1,7 +1,7 @@
 import assert from "assert";
 import 'dotenv/config';
 import {Application} from 'express'
-import {port} from "./config";
+import {port} from "./config/config";
 import server from "./server";
 
 // assert(process.env.PORT, 'process.env.PORT missing');

@@ -1,8 +1,8 @@
 import {Configuration, FindAccount, KoaContextWithOIDC} from "oidc-provider";
 import {Client} from "openid-client";
-import {appUrl} from "../config";
-import jwks from './jkws.json'
-import RedisAdapter from "./redis_adapter";
+import {appUrl} from "./config";
+import jwks from '../jkws.json'
+import RedisAdapter from "../infra/redisAdapter";
 
 function isFirstParty(client: Client): Boolean {
     return true;
