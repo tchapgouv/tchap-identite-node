@@ -1,4 +1,4 @@
-const port: number = 3000;
+const port: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 export {
     port
