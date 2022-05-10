@@ -26,8 +26,6 @@ matrixClient.on("room.event", handleCommand);
 
 // This is our event handler for dealing with the `!hello` command.
 async function handleCommand(roomId: string, event: RoomEvent) {
-    console.log('log', event)
-
     // Don't reply to bot
     if (event["sender"] === await matrixClient.getUserId()) return;
     if (!event["content"]) return;
