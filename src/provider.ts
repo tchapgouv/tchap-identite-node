@@ -1,6 +1,56 @@
-import {Configuration} from "oidc-provider";
+import {Configuration, FindAccount, KoaContextWithOIDC} from "oidc-provider";
+import {BaseClient, Client} from "openid-client";
 import jwks from './jkws.json'
 import RedisAdapter from "./redis_adapter";
+
+function isFirstParty(client: Client): Boolean {
+    return true;
+}
+
+// Allows to skip consent
+const loadExistingGrant = async (ctx: KoaContextWithOIDC) => {
+    console.log('toto', ctx.oidc.client)
+    const grantId = (ctx.oidc.result
+        && ctx.oidc.result.consent
+        && ctx.oidc.result.consent.grantId) || ctx.oidc.session!.grantIdFor(ctx.oidc.client!.clientId);
+
+    if (grantId) {
+        // keep grant expiry aligned with session expiry
+        // to prevent consent prompt being requested when grant expires
+        const grant = await ctx.oidc.provider.Grant.find(grantId);
+
+        // this aligns the Grant ttl with that of the current session
+        // if the same Grant is used for multiple sessions, or is set
+        // to never expire, you probably do not want this in your code
+        if (ctx.oidc.account && grant!.exp! < ctx.oidc.session!.exp) {
+            grant!.exp = ctx.oidc.session!.exp;
+
+            await grant!.save();
+        }
+
+        return grant;
+    } else if (ctx.oidc.client && isFirstParty(ctx.oidc.client as any)) {
+        const grant = new ctx.oidc.provider.Grant({
+            clientId: ctx.oidc.client!.clientId,
+            accountId: ctx.oidc.session!.accountId,
+        });
+
+        grant.addOIDCScope('openid email profile');
+        // grant.addOIDCClaims(['first_name']);
+        // grant.addResourceScope('urn:example:resource-indicator', 'api:read api:write');
+        await grant.save();
+        return grant;
+    }
+}
+
+const findAccount: FindAccount = async (ctx, id) => {
+    return {
+        accountId: id,
+        async claims(use: any, scope: any) {
+            return {sub: id};
+        },
+    };
+}
 
 const configuration: Configuration = {
     adapter: RedisAdapter,
@@ -24,19 +74,13 @@ const configuration: Configuration = {
     },
     jwks,
     responseTypes: ['code'],
-    findAccount: (ctx, id) => {
-        return {
-            accountId: id,
-            async claims(use, scope) {
-                return {sub: id};
-            },
-        };
-    },
+    findAccount,
     interactions: {
         url(ctx, interaction) {
             return `/interaction/${interaction.uid}`;
         },
     },
+    loadExistingGrant,
     features: {
         // disable the packaged interactions
         devInteractions: {enabled: false},

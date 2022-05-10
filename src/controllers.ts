@@ -2,7 +2,6 @@ import assert from "assert";
 import {RequestHandler} from "express";
 import {Provider} from "oidc-provider";
 import otpGenerator from 'otp-generator';
-import {matrixClient} from "./notifications/matrixBot";
 
 
 export const makeStartInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
@@ -29,6 +28,7 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
                 params,
                 title: 'Authorize Tchap',
                 flash: undefined,
+                login_hint: req.body?.email,
             });
         }
 
@@ -41,48 +41,83 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
     }
 }
 
-export const makeEndInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+export const makeLoginInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
     try {
-        const interactionDetails = await provider.interactionDetails(req, res);
-        // @ts-ignore fixme
-        const {prompt: {name, details}, params, session, uid} = interactionDetails;
-        assert.strictEqual(name, 'consent');
+        const {uid, prompt, params} = await provider.interactionDetails(req, res);
+        assert.strictEqual(prompt.name, 'login');
+        const client = await provider.Client.find(params.client_id as string);
 
-        // todo check account here
+        // const accountId = await Account.authenticate(req.body.email, req.body.password);
         const accountId = '1';
 
         if (req.body.otp !== '123') {
             return res.render('interaction', {
                 client: '',
                 uid,
-                details,
+                details: prompt.details,
                 params,
                 title: 'Authorize Tchap',
                 flash: 'Invalid OTP (123)'
             });
         }
 
-        let {grantId} = interactionDetails;
-        // fixme maybe we doesn't need consent / grants checks
-        grantId = await getGrantId(grantId, provider, accountId, params.clientId as string, details);
-
-        const consent = {};
-        if (!interactionDetails.grantId) {
-            // we don't have to pass grantId to consent, we're just modifying existing one
-            // @ts-ignore
-            consent.grantId = grantId;
-        }
+        // if (!accountId) {
+        //     res.render('login', {
+        //         client,
+        //         uid,
+        //         details: prompt.details,
+        //         params: {
+        //             ...params,
+        //             login_hint: req.body.email,
+        //         },
+        //         title: 'Sign-in Tchap',
+        //         flash: 'Invalid email or password.',
+        //     });
+        //     return;
+        // }
 
         const result = {
-            consent,
+            login: {accountId},
+        };
+
+        await provider.interactionFinished(req, res, result, {mergeWithLastSubmission: false});
+    } catch (err) {
+        next(err);
+    }
+
+    await next();
+}
+
+export const makeEndInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+    try {
+        const interactionDetails = await provider.interactionDetails(req, res);
+        // console.log(req.body.otp)
+        // @ts-ignore fixme
+        const {prompt: {name, details}, params, session, uid} = interactionDetails;
+        // assert.strictEqual(name, 'consent');
+
+        const accountId = '1';
+
+        // Auto consent in provider.ts
+        // https://github.com/panva/node-oidc-provider/blob/f70decd804d2c0ac785e8efd7b08dd9308b07fd5/recipes/skip_consent.md
+        // let {grantId} = interactionDetails;
+        // grantId = await getGrantId(grantId, provider, accountId, params.clientId as string, details);
+        //
+        // const consent = {};
+        // if (!interactionDetails.grantId) {
+        //     // we don't have to pass grantId to consent, we're just modifying existing one
+        //     // @ts-ignore
+        //     consent.grantId = grantId;
+        // }
+
+        const result = {
+            // consent,
             login: {accountId},
         };
         await provider.interactionFinished(req, res, result, {mergeWithLastSubmission: true});
     } catch (err) {
         next(err);
     }
-
-    await next();
 }
 
 export const makeAbortInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
