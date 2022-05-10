@@ -1,9 +1,9 @@
 import express, {Application} from 'express'
 import helmet from "helmet";
 import path from "path";
-import {oidcProvider} from "./dependencies";
-import flowRouter from "./routes";
-import testRouter from "./test-flow";
+import {oidcProvider} from "./auth/dependencies";
+import flowRouter from "./auth/routes";
+import demoRouter from "./demo-app";
 
 const server = () => {
     const app: Application = express();
@@ -21,7 +21,7 @@ const server = () => {
     app.set('trust proxy', 1);
 
     // !!!!!!!!!!!! DEV ONLY !!!!!!!!!!!!!
-    app.use(testRouter);
+    app.use(demoRouter);
     // !!!!!!!!!!!! DEV ONLY !!!!!!!!!!!!!
 
     app.use(flowRouter)

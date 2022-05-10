@@ -2,15 +2,15 @@ import {Router} from "express";
 import {generators, Issuer} from 'openid-client';
 import {appUrl} from "./config";
 
-const testRouter = Router();
+const demoRouter = Router();
 
-testRouter.get('/test', async (req, res) => {
-    return res.render('test', {
+demoRouter.get('/home', async (req, res) => {
+    return res.render('demo', {
         loginUrl: appUrl + '/login'
     });
 });
 
-testRouter.get('/login', async (req, res) => {
+demoRouter.get('/login', async (req, res) => {
     const issuer = await Issuer.discover(appUrl);
     // console.log('Discovered issuer %s %O', issuer.issuer, issuer.metadata);
 
@@ -39,9 +39,9 @@ testRouter.get('/login', async (req, res) => {
     res.redirect(redirect_url)
 });
 
-testRouter.get('/cb', (req, res) => {
+demoRouter.get('/callback', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(req.query));
 });
 
-export default testRouter;
+export default demoRouter;
