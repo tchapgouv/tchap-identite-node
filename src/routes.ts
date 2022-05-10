@@ -5,7 +5,7 @@ import {
     endInteractionController,
     loginInteractionController,
     startInteractionController
-} from "./config/dependencies";
+} from "./authControllers";
 
 const parse = bodyParser.urlencoded({extended: false});
 
@@ -21,4 +21,6 @@ flowRouter.post('/interaction/:uid/login', setNoCache, parse, loginInteractionCo
 flowRouter.post('/interaction/:uid/confirm', setNoCache, parse, endInteractionController);
 flowRouter.get('/interaction/:uid/abort', setNoCache, abortInteractionController);
 
-export default flowRouter;
+export {
+    flowRouter
+};

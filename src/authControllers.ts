@@ -1,32 +1,20 @@
 import assert from "assert";
 import {RequestHandler} from "express";
-import { MatrixClient } from "matrix-bot-sdk";
 import {Provider} from "oidc-provider";
 import otpGenerator from 'otp-generator';
+import {oidcProvider, sendCodeToAccount, validateAccountWithCode} from "./config/dependencies";
 
 let GLOBAL_OTP: string = '';
 
-export const makeStartInteraction = (provider: Provider, matrixClient: MatrixClient): RequestHandler => async (req, res, next) => {
+export const startInteractionController: RequestHandler = async (req, res, next) => {
     try {
         const {
             uid, prompt, params,
-        } = await provider.interactionDetails(req, res);
+        } = await oidcProvider.interactionDetails(req, res);
         // console.log('see what else is available to you for interaction views', await provider.interactionDetails(req, res));
+        const client = await oidcProvider.Client.find(params.client_id as string);
 
-        const client = await provider.Client.find(params.client_id as string);
-
-        const otp = otpGenerator.generate(6, {
-            lowerCaseAlphabets: false,
-            upperCaseAlphabets: false,
-            specialChars: false
-        })
-
-        GLOBAL_OTP = otp;
-
-        await matrixClient.sendMessage('!lWPxYxCRAQGzPvmeDZ:i.tchap.gouv.fr', {
-            "msgtype": "m.notice",
-            "body": `OTP généré: ${otp}`,
-        })
+        const otp = await sendCodeToAccount(req.body?.email ?? 'c.eliacheff@gmail.com')
 
         if (prompt.name === 'consent' || prompt.name === 'login') {
             return res.render('interaction', {
@@ -49,16 +37,16 @@ export const makeStartInteraction = (provider: Provider, matrixClient: MatrixCli
     }
 }
 
-export const makeLoginInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+export const loginInteractionController: RequestHandler = async (req, res, next) => {
     try {
-        const {uid, prompt, params} = await provider.interactionDetails(req, res);
+        const {uid, prompt, params} = await oidcProvider.interactionDetails(req, res);
         assert.strictEqual(prompt.name, 'login');
-        const client = await provider.Client.find(params.client_id as string);
+        const client = await oidcProvider.Client.find(params.client_id as string);
 
-        // const accountId = await Account.authenticate(req.body.email, req.body.password);
-        const accountId = '1';
-
-        if (!req.body.otp || !GLOBAL_OTP || req.body.otp !== GLOBAL_OTP) {
+        let accountId;
+        try {
+            accountId = await validateAccountWithCode(req.body?.email ?? 'c.eliacheff@gmail.com', req.body.otp)
+        } catch (err) {
             return res.render('interaction', {
                 client,
                 uid,
@@ -68,6 +56,8 @@ export const makeLoginInteraction = (provider: Provider): RequestHandler => asyn
                 flash: `Invalid OTP, use ${GLOBAL_OTP}`
             });
         }
+        // const accountId = await Account.authenticate(req.body.email, req.body.password);
+        // const accountId = '1';
 
         // if (!accountId) {
         //     res.render('login', {
@@ -88,7 +78,7 @@ export const makeLoginInteraction = (provider: Provider): RequestHandler => asyn
             login: {accountId},
         };
 
-        await provider.interactionFinished(req, res, result, {mergeWithLastSubmission: false});
+        await oidcProvider.interactionFinished(req, res, result, {mergeWithLastSubmission: false});
     } catch (err) {
         next(err);
     }
@@ -96,9 +86,9 @@ export const makeLoginInteraction = (provider: Provider): RequestHandler => asyn
     await next();
 }
 
-export const makeEndInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+export const endInteractionController: RequestHandler = async (req, res, next) => {
     try {
-        const interactionDetails = await provider.interactionDetails(req, res);
+        const interactionDetails = await oidcProvider.interactionDetails(req, res);
         // console.log(req.body.otp)
         // @ts-ignore fixme
         const {prompt: {name, details}, params, session, uid} = interactionDetails;
@@ -122,19 +112,19 @@ export const makeEndInteraction = (provider: Provider): RequestHandler => async 
             // consent,
             login: {accountId},
         };
-        await provider.interactionFinished(req, res, result, {mergeWithLastSubmission: true});
+        await oidcProvider.interactionFinished(req, res, result, {mergeWithLastSubmission: true});
     } catch (err) {
         next(err);
     }
 }
 
-export const makeAbortInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+export const abortInteractionController: RequestHandler = async (req, res, next) => {
     try {
         const result = {
             error: 'access_denied',
             error_description: 'End-User aborted interaction',
         };
-        await provider.interactionFinished(req, res, result, {mergeWithLastSubmission: false});
+        await oidcProvider.interactionFinished(req, res, result, {mergeWithLastSubmission: false});
     } catch (err) {
         next(err);
     }
