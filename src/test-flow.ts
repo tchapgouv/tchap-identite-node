@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {generators, Issuer} from 'openid-client';
+import {appUrl} from "./config";
 
 const testRouter = Router();
 
@@ -8,13 +9,13 @@ testRouter.get('/test', async (req, res) => {
 });
 
 testRouter.get('/login', async (req, res) => {
-    const issuer = await Issuer.discover('http://localhost:3000');
+    const issuer = await Issuer.discover(appUrl);
     // console.log('Discovered issuer %s %O', issuer.issuer, issuer.metadata);
 
     const client = new issuer.Client({
         client_id: 'bar',
         client_secret: 'baz',
-        redirect_uris: ['http://localhost:3000/cb'],
+        redirect_uris: [appUrl + '/cb'],
         response_types: ['code'],
         // id_token_signed_response_alg (default "RS256")
         // token_endpoint_auth_method (default "client_secret_basic")

@@ -1,5 +1,4 @@
 import express, {Application} from 'express'
-import * as fs from "fs";
 import helmet from "helmet";
 import path from "path";
 import {oidcProvider} from "./dependencies";
@@ -11,6 +10,8 @@ const server = () => {
 
     app.set('views', path.join(__dirname, '../views'));
     app.set('view engine', 'ejs');
+    app.use(express.static(path.join(__dirname,
+        '../static')));
 
     app.use('/dsfr',
         express.static(path.join(__dirname,
@@ -25,6 +26,11 @@ const server = () => {
 
     app.use(flowRouter)
     app.use('/', oidcProvider.callback());
+
+    // checkhealth
+    // app.use('/', (req, res) => {
+    //     return res.json({status: 'ok'})
+    // })
 
     return app;
 }

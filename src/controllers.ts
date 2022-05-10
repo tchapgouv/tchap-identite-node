@@ -22,7 +22,7 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
 
         if (prompt.name === 'consent' || prompt.name === 'login') {
             return res.render('interaction', {
-                client,
+                client: '',
                 uid,
                 details: prompt.details,
                 params,
@@ -52,7 +52,7 @@ export const makeLoginInteraction = (provider: Provider): RequestHandler => asyn
 
         if (req.body.otp !== '123') {
             return res.render('interaction', {
-                client: '',
+                client,
                 uid,
                 details: prompt.details,
                 params,

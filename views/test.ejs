@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Test app</title>
-    <link type="text/css" rel="stylesheet" href="/dsfr/dsfr.css">
-</head>
-<body>
+<%- include('partials/header.ejs'); %>
 <div>
     <header role="banner" class="fr-header">
         <div class="fr-header__body">
@@ -17,8 +8,7 @@
                         <div class="fr-header__brand-top">
                             <div class="fr-header__logo">
                                 <p class="fr-logo">
-                                    Intitulé
-                                    <br>Officiel
+                                    Ministère du test
                                 </p>
                             </div>
                             <div class="fr-header__navbar">
@@ -28,10 +18,10 @@
                             </div>
                         </div>
                         <div class="fr-header__service">
-                            <a href="/" title="Accueil - [À MODIFIER | Nom du site / service] - [À MODIFIER | nom de l’entité (ministère , secrétariat d‘état, gouvernement)]">
-                                <p class="fr-header__service-title">Nom du site / service</p>
+                            <a href="/" title="Accueil - L'app du futur - Ministère du test">
+                                <p class="fr-header__service-title">L'app du futur</p>
                             </a>
-                            <p class="fr-header__service-tagline">baseline - précisions sur l‘organisation</p>
+                            <p class="fr-header__service-tagline"></p>
                         </div>
                     </div>
                     <div class="fr-header__tools">
@@ -39,7 +29,7 @@
                             <ul class="fr-links-group">
                                 <li>
                                     <a class="fr-link fr-fi-add-circle-line" href="http://localhost:3000/login">
-                                        Test Authorization_code flow
+                                        Se connecter
                                     </a>
                                 </li>
                             </ul>
@@ -48,24 +38,19 @@
                 </div>
             </div>
         </div>
-        <!-- Navigation principale -->
-        <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
-            <div class="fr-container">
-                <button class="fr-link--close fr-link" aria-controls="modal-833">Fermer</button>
-                <div class="fr-header__menu-links"></div>
-                <nav class="fr-nav" id="navigation-832" role="navigation" aria-label="Menu principal">
-                    <ul class="fr-nav__list">
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="#" target="_self">accès direct</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
     </header>
+
+    <div class="fr-connect-group">
+        <button class="fr-connect">
+            <span class="fr-connect__login">S’identifier avec</span>
+            <span class="fr-connect__brand">Tchap Identité</span>
+        </button>
+        <p>
+            <a href="https://franceconnect.gouv.fr/" target="_blank"  rel="noopener" title="Qu’est ce que Tchap Identité ? - nouvelle fenêtre">Qu’est ce que Tchap Identité ?</a>
+        </p>
+    </div>
 </div>
-</body>
-</html>
+<%- include('partials/footer.ejs')%>
 
 
 

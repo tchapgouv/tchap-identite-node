@@ -1,10 +1,10 @@
 import {Provider} from "oidc-provider";
-import {port} from "./config";
+import {appUrl} from "./config";
 import {makeAbortInteraction, makeEndInteraction, makeLoginInteraction, makeStartInteraction} from "./controllers";
 import {matrixClient} from "./notifications/matrixBot";
 import {configuration} from "./provider";
 
-const oidcProvider = new Provider(`http://localhost:${port}`, configuration);
+const oidcProvider = new Provider(appUrl, configuration);
 oidcProvider.proxy = true;
 
 // !!!!!!!!!!!! DEV ONLY !!!!!!!!!!!!!

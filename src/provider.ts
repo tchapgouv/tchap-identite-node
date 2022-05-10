@@ -1,5 +1,6 @@
 import {Configuration, FindAccount, KoaContextWithOIDC} from "oidc-provider";
-import {BaseClient, Client} from "openid-client";
+import {Client} from "openid-client";
+import {appUrl} from "./config";
 import jwks from './jkws.json'
 import RedisAdapter from "./redis_adapter";
 
@@ -56,7 +57,7 @@ const configuration: Configuration = {
     clients: [
         {
             client_id: 'flow-not-allowed',
-            redirect_uris: ['http://localhost:3000/cb'],
+            redirect_uris: [appUrl + '/cb'],
             grant_types: ['implicit'],
             response_types: ['id_token'],
             token_endpoint_auth_method: 'none',
@@ -64,7 +65,7 @@ const configuration: Configuration = {
         {
             client_id: 'bar',
             client_secret: 'baz',
-            redirect_uris: ['http://localhost:3000/cb'],
+            redirect_uris: [appUrl + '/cb'],
             response_types: ['code']
         }
     ],
@@ -83,8 +84,8 @@ const configuration: Configuration = {
     features: {
         // disable the packaged interactions
         devInteractions: {enabled: false},
-        encryption: { enabled: true },
-        introspection: { enabled: true },
+        encryption: {enabled: true},
+        introspection: {enabled: true},
     },
     ttl: {
         AccessToken: 1 * 60 * 60, // 1 hour in seconds
