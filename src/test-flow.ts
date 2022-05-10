@@ -5,7 +5,9 @@ import {appUrl} from "./config";
 const testRouter = Router();
 
 testRouter.get('/test', async (req, res) => {
-    return res.render('test');
+    return res.render('test', {
+        loginUrl: appUrl + '/login'
+    });
 });
 
 testRouter.get('/login', async (req, res) => {
