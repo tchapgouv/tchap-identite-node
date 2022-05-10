@@ -1,11 +1,12 @@
 import assert from "assert";
 import {RequestHandler} from "express";
+import { MatrixClient } from "matrix-bot-sdk";
 import {Provider} from "oidc-provider";
 import otpGenerator from 'otp-generator';
 
 let GLOBAL_OTP: string = '';
 
-export const makeStartInteraction = (provider: Provider): RequestHandler => async (req, res, next) => {
+export const makeStartInteraction = (provider: Provider, matrixClient: MatrixClient): RequestHandler => async (req, res, next) => {
     try {
         const {
             uid, prompt, params,
@@ -21,6 +22,11 @@ export const makeStartInteraction = (provider: Provider): RequestHandler => asyn
         })
 
         GLOBAL_OTP = otp;
+
+        await matrixClient.sendMessage('!lWPxYxCRAQGzPvmeDZ:i.tchap.gouv.fr', {
+            "msgtype": "m.notice",
+            "body": `OTP généré: ${otp}`,
+        })
 
         if (prompt.name === 'consent' || prompt.name === 'login') {
             return res.render('interaction', {
