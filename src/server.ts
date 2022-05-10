@@ -1,4 +1,5 @@
 import express, {Application} from 'express'
+import * as fs from "fs";
 import helmet from "helmet";
 import path from "path";
 import {oidcProvider} from "./dependencies";
@@ -10,6 +11,10 @@ const server = () => {
 
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
+
+    app.use('/dsfr',
+        express.static(path.join(__dirname,
+            '../node_modules/@gouvfr/dsfr/dist')));
 
     app.use(helmet());
     app.set('trust proxy', 1);

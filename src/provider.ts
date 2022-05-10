@@ -9,7 +9,6 @@ function isFirstParty(client: Client): Boolean {
 
 // Allows to skip consent
 const loadExistingGrant = async (ctx: KoaContextWithOIDC) => {
-    console.log('toto', ctx.oidc.client)
     const grantId = (ctx.oidc.result
         && ctx.oidc.result.consent
         && ctx.oidc.result.consent.grantId) || ctx.oidc.session!.grantIdFor(ctx.oidc.client!.clientId);
