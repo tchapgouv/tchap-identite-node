@@ -3,7 +3,7 @@ import helmet from "helmet";
 import path from "path";
 import {oidcProvider} from "./auth/dependencies";
 import flowRouter from "./auth/routes";
-import demoRouter from "./demo-app";
+import demoRouter from "./demo-app/demo-app";
 
 const server = () => {
     const app: Application = express();
