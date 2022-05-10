@@ -9,7 +9,7 @@ import testRouter from "./test-flow";
 const server = () => {
     const app: Application = express();
 
-    app.set('views', path.join(__dirname, 'views'));
+    app.set('views', path.join(__dirname, '../views'));
     app.set('view engine', 'ejs');
 
     app.use('/dsfr',
