@@ -53,7 +53,6 @@ async function handleCommand(roomId: string, event: RoomEvent) {
 //         })
 //     }
 // }
-
 export {
     // matrixBot,
     matrixClient

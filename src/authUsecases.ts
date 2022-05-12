@@ -1,16 +1,20 @@
 import {MatrixClient} from "matrix-bot-sdk";
+import * as generator from 'otp-generator';
+
 
 export const makeSendCodeToAccount = (matrixClient: MatrixClient, otpGenerator: any, otpRepository: any) => async (email: string) => {
+    //fixme
+    otpGenerator = generator;
     const otp = otpGenerator.generate(6, {
         lowerCaseAlphabets: false,
         upperCaseAlphabets: false,
         specialChars: false
     })
 
-    await otpRepository.save({
-        otp,
-        accountId: '1'
-    });
+    // await otpRepository.save({
+    //     otp,
+    //     accountId: '1'
+    // });
 
     // notify_user([TchapStrategy, EmailStrategy])
     await matrixClient.sendMessage('!lWPxYxCRAQGzPvmeDZ:i.tchap.gouv.fr', {

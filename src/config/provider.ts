@@ -65,7 +65,7 @@ const configuration: Configuration = {
         {
             client_id: 'bar',
             client_secret: 'baz',
-            redirect_uris: [appUrl + '/cb'],
+            redirect_uris: [appUrl + '/cb', 'http://localhost:3000/cb'],
             response_types: ['code']
         }
     ],

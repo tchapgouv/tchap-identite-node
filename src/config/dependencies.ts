@@ -26,7 +26,11 @@ oidcProvider.Client.Schema.prototype.invalidate = function invalidate(message: a
 // client up. This will start it syncing.
 matrixClient.start().then(() => console.log("Client started!"));
 
-const sendCodeToAccount = makeSendCodeToAccount(matrixClient, null, null);
+const otpGenerator = () => ({
+    generate: () => '123'
+})
+
+const sendCodeToAccount = makeSendCodeToAccount(matrixClient, otpGenerator, null);
 const validateAccountWithCode = makeValidateAccountWithCode(null, null);
 
 export {
